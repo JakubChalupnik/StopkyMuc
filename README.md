@@ -40,3 +40,22 @@ Manual CS switching is handled in `DisplayManager`.
 - Wi-Fi credentials: `/wifi.cfg`
 - selected theme: `/theme.cfg`
 - raw mono alarm audio: `/alarm.raw`
+
+## Display Bring-Up
+
+The repo now includes:
+
+- `tools/tft/User_Setup_StopkyMuc.h`: checked-in `TFT_eSPI` setup for the project
+- `display_test/display_test.ino`: standalone panel test sketch
+
+Suggested bring-up flow:
+
+1. Copy `tools/tft/User_Setup_StopkyMuc.h` to your local `TFT_eSPI/User_Setup.h`
+2. Compile and upload `display_test/display_test.ino`
+3. Verify each panel shows:
+   - panel number near the top
+   - `170x320` text
+   - red/green/blue vertical bars
+   - `TOP` at the physical top edge
+
+If the image is clipped or shifted, the next thing to tune is the ST7789 panel offset and possibly `setRotation()`.

@@ -1,0 +1,42 @@
+# StopkyMuc Skeleton
+
+Arduino-style firmware skeleton generated from `kitchen_timer_project_spec.md`.
+
+## Included modules
+
+- `StopkyMuc.ino`: main app state machine and loop
+- `AppConfig.h`: GPIO mapping and app constants
+- `DisplayManager.*`: shared SPI + manual CS switching for 5 ST7789 displays
+- `Renderer.*`: 7-segment, nixie-style, and text character rendering
+- `ButtonManager.*`: debounce, long-press, and repeat handling
+- `TimerManager.*`: non-blocking countdown timer
+- `StorageManager.*`: LittleFS-backed config storage
+- `WifiService.*`: stored-credential connect, captive portal fallback, NTP setup
+- `AudioManager.*`: I2S mono alarm playback loop
+
+## Proposed GPIO map
+
+- TFT SPI: `MOSI=35`, `SCLK=36`
+- TFT control: `DC=37`, `RST=33`, `BL=34`
+- TFT CS: `1, 2, 3, 4, 5`
+- I2S: `BCLK=6`, `LRCK=7`, `DIN=8`
+- Buttons: `PLUS=9`, `MINUS=10`
+
+This mapping is a conservative starting point for the ESP32-S2 Mini, but it still needs to be validated against your exact board revision and wiring.
+
+## Important TFT_eSPI note
+
+This skeleton assumes `TFT_eSPI` is configured with:
+
+- ST7789 driver enabled
+- display size `170x320`
+- `TFT_CS` disabled or set aside for manual CS handling
+- `TFT_MOSI`, `TFT_SCLK`, `TFT_DC`, `TFT_RST` matching `AppConfig.h`
+
+Manual CS switching is handled in `DisplayManager`.
+
+## Filesystem expectations
+
+- Wi-Fi credentials: `/wifi.cfg`
+- selected theme: `/theme.cfg`
+- raw mono alarm audio: `/alarm.raw`

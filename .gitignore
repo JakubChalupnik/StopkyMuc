@@ -1,0 +1,6 @@
+.arduino/
+build/
+dist/
+*.bin
+*.elf
+*.map

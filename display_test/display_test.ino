@@ -17,6 +17,16 @@ constexpr uint16_t kPanelHeight = 320;
 
 TFT_eSPI tft;
 
+void pulseSharedReset() {
+  pinMode(kTftRst, OUTPUT);
+  digitalWrite(kTftRst, HIGH);
+  delay(5);
+  digitalWrite(kTftRst, LOW);
+  delay(20);
+  digitalWrite(kTftRst, HIGH);
+  delay(150);
+}
+
 void selectDisplay(uint8_t index) {
   for (uint8_t i = 0; i < kDisplayCount; ++i) {
     digitalWrite(kCsPins[i], HIGH);
@@ -69,8 +79,7 @@ void setup() {
   pinMode(kTftDc, OUTPUT);
   digitalWrite(kTftDc, HIGH);
 
-  pinMode(kTftRst, OUTPUT);
-  digitalWrite(kTftRst, HIGH);
+  pulseSharedReset();
 
   pinMode(kTftBl, OUTPUT);
   digitalWrite(kTftBl, HIGH);

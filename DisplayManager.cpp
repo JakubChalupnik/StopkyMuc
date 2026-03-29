@@ -4,8 +4,22 @@
 
 #include "Renderer.h"
 
+namespace {
+void pulseSharedReset() {
+  pinMode(Pins::TFT_RST_PIN, OUTPUT);
+  digitalWrite(Pins::TFT_RST_PIN, HIGH);
+  delay(5);
+  digitalWrite(Pins::TFT_RST_PIN, LOW);
+  delay(20);
+  digitalWrite(Pins::TFT_RST_PIN, HIGH);
+  delay(150);
+}
+}  // namespace
+
 void DisplayManager::begin() {
   SPI.begin(Pins::TFT_SCLK_PIN, -1, Pins::TFT_MOSI_PIN, -1);
+
+  pulseSharedReset();
 
   pinMode(Pins::TFT_BL_PIN, OUTPUT);
   digitalWrite(Pins::TFT_BL_PIN, HIGH);

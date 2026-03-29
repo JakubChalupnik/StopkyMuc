@@ -13,7 +13,7 @@
 #define TFT_SCLK 36
 #define TFT_CS   -1
 #define TFT_DC   37
-#define TFT_RST  33
+#define TFT_RST  -1
 #define TFT_BL   34
 #define TFT_BACKLIGHT_ON HIGH
 

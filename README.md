@@ -58,4 +58,7 @@ Suggested bring-up flow:
    - red/green/blue vertical bars
    - `TOP` at the physical top edge
 
+The checked-in TFT setup uses `TFT_RST = -1` on purpose.
+The five displays share one reset line, so reset is pulsed once in the sketch before panel initialization. If `TFT_eSPI` toggles reset during every `tft.init()`, only the last initialized panel will remain active.
+
 If the image is clipped or shifted, the next thing to tune is the ST7789 panel offset and possibly `setRotation()`.

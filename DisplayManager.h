@@ -29,6 +29,7 @@ class DisplayManager {
   void setAddressWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
   void initDisplayDirect(uint8_t index);
   void pushSpriteToDisplay(uint8_t index);
+  uint8_t physicalDisplayIndex(uint8_t logicalIndex) const;
 
   TFT_eSPI tft_;
   TFT_eSprite sprite_;

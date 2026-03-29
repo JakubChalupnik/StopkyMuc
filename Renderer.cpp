@@ -16,6 +16,36 @@ constexpr uint8_t SEG_E = 1 << 4;
 constexpr uint8_t SEG_F = 1 << 5;
 constexpr uint8_t SEG_G = 1 << 6;
 
+void drawHorizontalSegment(bool on, int32_t x0, int32_t x1, int32_t y, int32_t thickness, int32_t tip, uint16_t color) {
+  if (!g_tft || !on) {
+    return;
+  }
+
+  const int32_t midY = y + thickness / 2;
+  const int32_t xA = x0 + tip;
+  const int32_t xB = x1 - tip;
+
+  g_tft->fillTriangle(xA, y, xB, y, x1, midY, color);
+  g_tft->fillTriangle(xA, y, x0, midY, x1, midY, color);
+  g_tft->fillTriangle(x0, midY, xB, y + thickness, x1, midY, color);
+  g_tft->fillTriangle(x0, midY, xA, y + thickness, xB, y + thickness, color);
+}
+
+void drawVerticalSegment(bool on, int32_t x, int32_t y0, int32_t y1, int32_t thickness, int32_t tip, uint16_t color) {
+  if (!g_tft || !on) {
+    return;
+  }
+
+  const int32_t midX = x + thickness / 2;
+  const int32_t yA = y0 + tip;
+  const int32_t yB = y1 - tip;
+
+  g_tft->fillTriangle(x, yA, midX, y0, x + thickness, yA, color);
+  g_tft->fillTriangle(x, yA, x + thickness, yA, x + thickness, yB, color);
+  g_tft->fillTriangle(x, yA, x + thickness, yB, x, yB, color);
+  g_tft->fillTriangle(x, yB, midX, y1, x + thickness, yB, color);
+}
+
 uint8_t segmentMask(char c) {
   switch (toupper(static_cast<unsigned char>(c))) {
     case '0': return SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F;
@@ -65,8 +95,8 @@ void renderChar7Seg(uint8_t slot, char c) {
   g_tft->fillScreen(TFT_BLACK);
   if (c == ':') {
     const int32_t cx = AppConfig::DISPLAY_WIDTH / 2;
-    g_tft->fillCircle(cx, 90, 8, TFT_WHITE);
-    g_tft->fillCircle(cx, 150, 8, TFT_WHITE);
+    g_tft->fillCircle(cx, AppConfig::DISPLAY_HEIGHT / 2 - 38, 12, TFT_WHITE);
+    g_tft->fillCircle(cx, AppConfig::DISPLAY_HEIGHT / 2 + 38, 12, TFT_WHITE);
     return;
   }
 
@@ -76,18 +106,36 @@ void renderChar7Seg(uint8_t slot, char c) {
 
   const uint8_t mask = segmentMask(c);
   if (mask == 0) {
-    drawCenteredGlyph(c, TFT_WHITE, TFT_BLACK, 4);
+    drawCenteredGlyph(c, TFT_WHITE, TFT_BLACK, 5);
     return;
   }
 
   const uint16_t color = TFT_WHITE;
-  drawSegment(mask & SEG_A, 28, 20, 78, 16, color);
-  drawSegment(mask & SEG_B, 98, 34, 16, 72, color);
-  drawSegment(mask & SEG_C, 98, 126, 16, 72, color);
-  drawSegment(mask & SEG_D, 28, 204, 78, 16, color);
-  drawSegment(mask & SEG_E, 20, 126, 16, 72, color);
-  drawSegment(mask & SEG_F, 20, 34, 16, 72, color);
-  drawSegment(mask & SEG_G, 28, 112, 78, 16, color);
+  constexpr int32_t hThickness = 34;
+  constexpr int32_t vThickness = 34;
+  constexpr int32_t tip = 18;
+
+  constexpr int32_t xH0 = 22;
+  constexpr int32_t xH1 = AppConfig::DISPLAY_WIDTH - 22;
+  constexpr int32_t xLeft = 6;
+  constexpr int32_t xRight = AppConfig::DISPLAY_WIDTH - 6 - vThickness;
+
+  constexpr int32_t yA = 6;
+  constexpr int32_t yG = (AppConfig::DISPLAY_HEIGHT - hThickness) / 2;
+  constexpr int32_t yD = AppConfig::DISPLAY_HEIGHT - 6 - hThickness;
+
+  constexpr int32_t yUpper0 = 28;
+  constexpr int32_t yUpper1 = yG - 8;
+  constexpr int32_t yLower0 = yG + hThickness + 8;
+  constexpr int32_t yLower1 = AppConfig::DISPLAY_HEIGHT - 28;
+
+  drawHorizontalSegment(mask & SEG_A, xH0, xH1, yA, hThickness, tip, color);
+  drawVerticalSegment(mask & SEG_B, xRight, yUpper0, yUpper1, vThickness, tip, color);
+  drawVerticalSegment(mask & SEG_C, xRight, yLower0, yLower1, vThickness, tip, color);
+  drawHorizontalSegment(mask & SEG_D, xH0, xH1, yD, hThickness, tip, color);
+  drawVerticalSegment(mask & SEG_E, xLeft, yLower0, yLower1, vThickness, tip, color);
+  drawVerticalSegment(mask & SEG_F, xLeft, yUpper0, yUpper1, vThickness, tip, color);
+  drawHorizontalSegment(mask & SEG_G, xH0, xH1, yG, hThickness, tip, color);
 }
 
 void renderCharNixie(uint8_t slot, char c) {

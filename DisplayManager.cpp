@@ -33,6 +33,10 @@ void pulseSharedReset() {
 
 DisplayManager::DisplayManager() : sprite_(&tft_) {}
 
+uint8_t DisplayManager::physicalDisplayIndex(uint8_t logicalIndex) const {
+  return (AppConfig::DISPLAY_COUNT - 1) - logicalIndex;
+}
+
 void DisplayManager::beginWrite() {
   SPI.beginTransaction(SPISettings(kSpiFrequency, MSBFIRST, SPI_MODE0));
 }
@@ -90,7 +94,7 @@ void DisplayManager::initDisplayDirect(uint8_t index) {
   writeCommand(kCmdDispOn);
   endWrite();
   delay(20);
-  digitalWrite(Pins::TFT_CS_PINS[index], HIGH);
+  digitalWrite(Pins::TFT_CS_PINS[physicalDisplayIndex(index)], HIGH);
 }
 
 void DisplayManager::pushSpriteToDisplay(uint8_t index) {
@@ -150,7 +154,7 @@ void DisplayManager::selectDisplay(uint8_t index) {
   }
 
   if (index < AppConfig::DISPLAY_COUNT) {
-    digitalWrite(Pins::TFT_CS_PINS[index], LOW);
+    digitalWrite(Pins::TFT_CS_PINS[physicalDisplayIndex(index)], LOW);
   }
 }
 
@@ -161,7 +165,7 @@ void DisplayManager::clearDisplay(uint8_t index) {
   } else {
     selectDisplay(index);
     tft_.fillScreen(TFT_BLACK);
-    digitalWrite(Pins::TFT_CS_PINS[index], HIGH);
+    digitalWrite(Pins::TFT_CS_PINS[physicalDisplayIndex(index)], HIGH);
   }
   current_[index] = ' ';
 }
@@ -193,7 +197,7 @@ void DisplayManager::drawChar(uint8_t index, char c) {
   if (spriteReady_) {
     pushSpriteToDisplay(index);
   } else {
-    digitalWrite(Pins::TFT_CS_PINS[index], HIGH);
+    digitalWrite(Pins::TFT_CS_PINS[physicalDisplayIndex(index)], HIGH);
   }
   current_[index] = c;
 }

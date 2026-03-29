@@ -30,7 +30,9 @@ static constexpr uint32_t BUTTON_REPEAT_MS = 180;
 
 static constexpr uint32_t WIFI_TIMEOUT_MS = 15000;
 static constexpr char AP_NAME[] = "CLOCK-SETUP";
-static constexpr char TIMEZONE[] = "CET-1CEST,M3.5.0/2,M10.5.0/3";
+// Europe/Berlin: UTC+1 in winter, UTC+2 in summer.
+// DST starts last Sunday in March at 02:00 local time and ends last Sunday in October at 03:00 local time.
+static constexpr char TIMEZONE_BERLIN[] = "CET-1CEST,M3.5.0/2,M10.5.0/3";
 static constexpr char NTP_SERVER_1[] = "pool.ntp.org";
 static constexpr char NTP_SERVER_2[] = "time.nist.gov";
 

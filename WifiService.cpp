@@ -49,9 +49,7 @@ bool WifiService::ensureTime() {
     return false;
   }
 
-  setenv("TZ", AppConfig::TIMEZONE, 1);
-  tzset();
-  configTime(0, 0, AppConfig::NTP_SERVER_1, AppConfig::NTP_SERVER_2);
+  configTzTime(AppConfig::TIMEZONE_BERLIN, AppConfig::NTP_SERVER_1, AppConfig::NTP_SERVER_2);
 
   tm timeInfo = {};
   return getLocalTime(&timeInfo, 5000);

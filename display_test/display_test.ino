@@ -7,6 +7,8 @@ constexpr uint8_t kDisplayCount = 5;
 
 constexpr uint8_t kTftMosi = 35;
 constexpr uint8_t kTftSclk = 36;
+constexpr uint8_t kTftDc = 37;
+constexpr uint8_t kTftRst = 33;
 constexpr uint8_t kTftBl = 34;
 constexpr uint8_t kCsPins[kDisplayCount] = {1, 2, 3, 4, 5};
 
@@ -63,6 +65,13 @@ void setup() {
   Serial.begin(115200);
 
   SPI.begin(kTftSclk, -1, kTftMosi, -1);
+
+  pinMode(kTftDc, OUTPUT);
+  digitalWrite(kTftDc, HIGH);
+
+  pinMode(kTftRst, OUTPUT);
+  digitalWrite(kTftRst, HIGH);
+
   pinMode(kTftBl, OUTPUT);
   digitalWrite(kTftBl, HIGH);
 

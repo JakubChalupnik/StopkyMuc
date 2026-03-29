@@ -16,6 +16,7 @@ constexpr uint16_t kPanelWidth = 170;
 constexpr uint16_t kPanelHeight = 320;
 
 TFT_eSPI tft;
+uint8_t gActiveDisplay = 0;
 
 void pulseSharedReset() {
   pinMode(kTftRst, OUTPUT);
@@ -64,11 +65,14 @@ void drawPanelFrame(uint8_t index) {
   releaseDisplay(index);
 }
 
-void drawTestPattern() {
-  for (uint8_t i = 0; i < kDisplayCount; ++i) {
-    drawPanelFrame(i);
-  }
+void drawSingleDisplay(uint8_t index) {
+  selectDisplay(index);
+  tft.init();
+  tft.setRotation(0);
+  drawPanelFrame(index);
+  releaseDisplay(index);
 }
+
 }  // namespace
 
 void setup() {
@@ -89,34 +93,17 @@ void setup() {
     digitalWrite(kCsPins[i], HIGH);
   }
 
-  for (uint8_t i = 0; i < kDisplayCount; ++i) {
-    selectDisplay(i);
-    tft.init();
-    tft.setRotation(0);
-    releaseDisplay(i);
-  }
-
-  drawTestPattern();
+  drawSingleDisplay(gActiveDisplay);
 }
 
 void loop() {
   static uint32_t lastMs = 0;
-  static bool inverted = false;
 
-  if (millis() - lastMs < 2000) {
+  if (millis() - lastMs < 1000) {
     return;
   }
 
   lastMs = millis();
-  inverted = !inverted;
-
-  for (uint8_t i = 0; i < kDisplayCount; ++i) {
-    selectDisplay(i);
-    if (inverted) {
-      tft.invertDisplay(true);
-    } else {
-      tft.invertDisplay(false);
-    }
-    releaseDisplay(i);
-  }
+  gActiveDisplay = (gActiveDisplay + 1) % kDisplayCount;
+  drawSingleDisplay(gActiveDisplay);
 }

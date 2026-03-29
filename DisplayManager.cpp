@@ -14,6 +14,11 @@ void pulseSharedReset() {
   digitalWrite(Pins::TFT_RST_PIN, HIGH);
   delay(150);
 }
+
+void preparePanel(TFT_eSPI& tft) {
+  tft.init();
+  tft.setRotation(0);
+}
 }  // namespace
 
 void DisplayManager::begin() {
@@ -32,9 +37,6 @@ void DisplayManager::begin() {
   Renderer::begin(&tft_);
 
   for (uint8_t i = 0; i < AppConfig::DISPLAY_COUNT; ++i) {
-    selectDisplay(i);
-    tft_.init();
-    tft_.setRotation(0);
     clearDisplay(i);
   }
 }
@@ -51,6 +53,7 @@ void DisplayManager::selectDisplay(uint8_t index) {
 
 void DisplayManager::clearDisplay(uint8_t index) {
   selectDisplay(index);
+  preparePanel(tft_);
   tft_.fillScreen(TFT_BLACK);
   digitalWrite(Pins::TFT_CS_PINS[index], HIGH);
   current_[index] = ' ';
@@ -62,6 +65,7 @@ void DisplayManager::drawChar(uint8_t index, char c) {
   }
 
   selectDisplay(index);
+  preparePanel(tft_);
   switch (theme_) {
     case THEME_7SEG:
       Renderer::renderChar7Seg(index, c);
